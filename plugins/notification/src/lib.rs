@@ -156,6 +156,14 @@ impl<R: Runtime> NotificationBuilder<R> {
         self
     }
 
+    /// Notification colored icon.
+    ///
+    /// On Android the icon must be placed in the app's `res/drawable` folder.
+    pub fn colored_icon(mut self, colored_icon: impl Into<String>) -> Self {
+        self.data.colored_icon.replace(colored_icon.into());
+        self
+    }
+
     /// Notification large icon (Android).
     ///
     /// The icon must be placed in the app's `res/drawable` folder.

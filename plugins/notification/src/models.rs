@@ -164,6 +164,7 @@ pub struct NotificationData {
     #[serde(default)]
     pub(crate) inbox_lines: Vec<String>,
     pub(crate) icon: Option<String>,
+    pub(crate) colored_icon: Option<String>,
     pub(crate) large_icon: Option<String>,
     pub(crate) icon_color: Option<String>,
     #[serde(default)]
@@ -202,6 +203,7 @@ impl Default for NotificationData {
             sound: None,
             inbox_lines: Vec::new(),
             icon: None,
+            colored_icon: None,
             large_icon: None,
             icon_color: None,
             attachments: Vec::new(),

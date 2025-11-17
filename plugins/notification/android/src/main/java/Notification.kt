@@ -8,6 +8,8 @@ import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import app.tauri.annotation.InvokeArg
 import app.tauri.plugin.JSArray
 import app.tauri.plugin.JSObject
@@ -23,6 +25,7 @@ class Notification {
   var summary: String? = null
   var sound: String? = null
   var icon: String? = null
+  var coloredIcon: String? = null
   var largeIcon: String? = null
   var iconColor: String? = null
   var actionTypeId: String? = null
@@ -64,9 +67,13 @@ class Notification {
 
   fun getSmallIcon(context: Context, defaultIcon: Int): Int {
     var resId: Int = AssetUtils.RESOURCE_ID_ZERO_VALUE
-    if (icon != null) {
+
+    if (SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM && coloredIcon != null) {
+      resId = AssetUtils.getResourceID(context, coloredIcon, "drawable")
+    } else if (icon != null) {
       resId = AssetUtils.getResourceID(context, icon, "drawable")
     }
+
     if (resId == AssetUtils.RESOURCE_ID_ZERO_VALUE) {
       resId = defaultIcon
     }
