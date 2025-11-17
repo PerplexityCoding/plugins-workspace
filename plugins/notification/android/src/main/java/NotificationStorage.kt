@@ -22,7 +22,7 @@ class NotificationStorage(private val context: Context, private val jsonMapper: 
     for (request in localNotifications) {
       if (request.schedule != null) {
         val key: String = request.id.toString()
-        editor.putString(key, request.sourceJson.toString())
+        editor.putString(key, request.sourceJson)
       }
     }
     editor.apply()

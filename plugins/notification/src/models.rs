@@ -176,6 +176,10 @@ pub struct NotificationData {
     pub(crate) auto_cancel: bool,
     #[serde(default)]
     pub(crate) silent: bool,
+    #[serde(default)]
+    pub(crate) visibility: Option<i32>,
+    #[serde(default)]
+    pub(crate) number: Option<i32>,
 }
 
 fn default_id() -> i32 {
@@ -205,6 +209,8 @@ impl Default for NotificationData {
             ongoing: false,
             auto_cancel: false,
             silent: false,
+            visibility: None,
+            number: None,
         }
     }
 }

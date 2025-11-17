@@ -96,6 +96,7 @@ class NotificationPlugin(private val activity: Activity): Plugin(activity) {
 
     super.load(webView)
     this.webView = webView
+
     notificationStorage = NotificationStorage(activity, jsonMapper())
     
     val manager = TauriNotificationManager(
@@ -134,10 +135,20 @@ class NotificationPlugin(private val activity: Activity): Plugin(activity) {
   @Command
   fun show(invoke: Invoke) {
     val notification = invoke.parseArgs(Notification::class.java)
-    val id = manager.schedule(notification)
 
+    if (notification == null) {
+      invoke.reject("Invalid notification options provided.")
+      return
+    }
+
+    notification.sourceJson = invoke.getRawArgs()
+
+    notificationStorage.appendNotifications(listOf(notification))
+
+    val id = manager.schedule(notification)
     invoke.resolveObject(id)
   }
+
 
   @Command
   fun batch(invoke: Invoke) {
@@ -155,6 +166,7 @@ class NotificationPlugin(private val activity: Activity): Plugin(activity) {
     manager.cancel(args.notifications)
     invoke.resolve()
   }
+
 
   @Command
   fun removeActive(invoke: Invoke) {
@@ -210,7 +222,7 @@ class NotificationPlugin(private val activity: Activity): Plugin(activity) {
           )
           val extras = JSObject()
           for (key in notification.extras.keySet()) {
-            extras.put(key!!, notification.extras.getString(key))
+            extras.put(key!!, notification.extras.get(key))
           }
           jsNotification.put("data", extras)
         }

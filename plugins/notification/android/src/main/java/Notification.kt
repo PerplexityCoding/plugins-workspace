@@ -31,13 +31,14 @@ class Notification {
   var isGroupSummary = false
   var isOngoing = false
   var isAutoCancel = false
-  var extra: JSObject? = null
+  var extra: Map<String, Any>? = null
   var attachments: List<NotificationAttachment>? = null
   var schedule: NotificationSchedule? = null
   var channelId: String? = null
   var sourceJson: String? = null
   var visibility: Int? = null
   var number: Int? = null
+  var silent: Boolean = false
 
   fun getSound(context: Context, defaultSound: Int): String? {
     var soundPath: String? = null
@@ -92,4 +93,4 @@ class Notification {
   }
 }
 
-class PendingNotification(val id: Int, val title: String?, val body: String?, val schedule: NotificationSchedule?, val extra: JSObject?)
+class PendingNotification(val id: Int, val title: String?, val body: String?, val schedule: NotificationSchedule?, val extra: Map<String, Any>?)

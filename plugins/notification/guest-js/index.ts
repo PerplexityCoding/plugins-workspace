@@ -95,6 +95,14 @@ interface Options {
    */
   icon?: string
   /**
+   * Notification icon.
+   *
+   * On Android the icon must be placed in the app's `res/drawable` folder.
+   *
+   * Use in android > 15
+   */
+  coloredIcon?: string
+  /**
    * Notification large icon (Android).
    *
    * The icon must be placed in the app's `res/drawable` folder.
@@ -557,7 +565,7 @@ async function removeChannel(id: string): Promise<void> {
  * @since 2.0.0
  */
 async function channels(): Promise<Channel[]> {
-  return await invoke('plugin:notification|listChannels')
+  return await invoke('plugin:notification|list_channels')
 }
 
 async function onNotificationReceived(
