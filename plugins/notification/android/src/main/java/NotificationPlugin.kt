@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.webkit.WebView
+import app.tauri.Logger
 import app.tauri.PermissionState
 import app.tauri.annotation.Command
 import app.tauri.annotation.InvokeArg
@@ -22,6 +23,7 @@ import app.tauri.plugin.Invoke
 import app.tauri.plugin.JSArray
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
+import java.util.Date
 
 const val LOCAL_NOTIFICATIONS = "permissionState"
 
@@ -189,8 +191,33 @@ class NotificationPlugin(private val activity: Activity): Plugin(activity) {
 
   @Command
   fun getPending(invoke: Invoke) {
-    val notifications= notificationStorage.getSavedNotifications()
+    val notifications = notificationStorage.getSavedNotifications()
     val result = Notification.buildNotificationPendingList(notifications)
+    invoke.resolveObject(result)
+  }
+
+  @Command
+  fun cleanupPending(invoke: Invoke) {
+    val now = Date().time
+    val notifications = notificationStorage.getSavedNotifications()
+    val removedIds = JSArray()
+    for (notification in notifications) {
+      val schedule = notification.schedule
+      if (schedule is NotificationSchedule.At) {
+        val delta = now - schedule.date.time
+        if (delta > SCHEDULE_GRACE_WINDOW_MS) {
+          notificationStorage.deleteNotification(notification.id.toString())
+          removedIds.put(notification.id)
+        }
+      }
+    }
+    val result = JSObject()
+    result.put("removed", removedIds.length())
+    result.put("ids", removedIds)
+    Logger.debug(
+      Logger.tags("Notification"),
+      "cleanupPending: removed=${removedIds.length()} ids=$removedIds"
+    )
     invoke.resolveObject(result)
   }
 

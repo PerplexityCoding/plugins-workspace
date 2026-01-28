@@ -107,6 +107,14 @@ impl<R: Runtime> Notification<R> {
             .map_err(Into::into)
     }
 
+    // only available on Android For now
+    #[cfg(target_os = "android")]
+    pub fn cleanup_pending(&self) -> crate::Result<CleanupPendingResult> {
+        self.0
+            .run_mobile_plugin("cleanupPending", ())
+            .map_err(Into::into)
+    }
+
     /// Cancel pending notifications.
     pub fn cancel(&self, notifications: Vec<i32>) -> crate::Result<()> {
         let mut args = HashMap::new();
@@ -147,4 +155,11 @@ impl<R: Runtime> Notification<R> {
 #[serde(rename_all = "camelCase")]
 struct PermissionResponse {
     permission_state: PermissionState,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CleanupPendingResult {
+    pub removed: usize,
+    pub ids: Vec<i32>,
 }

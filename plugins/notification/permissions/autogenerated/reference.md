@@ -25,6 +25,7 @@ It allows all notification related features.
 - `allow-delete-channel`
 - `allow-create-channel`
 - `allow-permission-state`
+- `allow-cleanup-pending`
 
 ## Permission Table
 
@@ -109,6 +110,32 @@ Enables the check_permissions command without any pre-configured scope.
 <td>
 
 Denies the check_permissions command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`notification:allow-cleanup-pending`
+
+</td>
+<td>
+
+Enables the cleanup_pending command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`notification:deny-cleanup-pending`
+
+</td>
+<td>
+
+Denies the cleanup_pending command without any pre-configured scope.
 
 </td>
 </tr>

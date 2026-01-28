@@ -10,6 +10,7 @@ const COMMANDS: &[&str] = &[
     "register_listener",
     "cancel",
     "get_pending",
+    "cleanup_pending",
     "remove_active",
     "get_active",
     "check_permissions",

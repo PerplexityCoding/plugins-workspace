@@ -279,6 +279,11 @@ interface PendingNotification {
   schedule: Schedule
 }
 
+interface CleanupPendingResult {
+  removed: number
+  ids: number[]
+}
+
 interface ActiveNotification {
   id: number
   tag?: string
@@ -423,6 +428,22 @@ async function pending(): Promise<PendingNotification[]> {
   return await invoke('plugin:notification|get_pending')
 }
 
+/**
+ * Removes old pending notifications from storage on Android.
+ *
+ * @example
+ * ```typescript
+ * import { cleanupPending } from '@tauri-apps/plugin-notification';
+ * const { removed, ids } = await cleanupPending();
+ * ```
+ *
+ * @returns A promise resolving to the cleanup result.
+ *
+ * @since 2.3.4
+ */
+async function cleanupPending(): Promise<CleanupPendingResult> {
+  return await invoke('plugin:notification|cleanup_pending')
+}
 /**
  * Cancels the pending notifications with the given list of identifiers.
  *
@@ -599,6 +620,7 @@ export {
   isPermissionGranted,
   registerActionTypes,
   pending,
+  cleanupPending,
   cancel,
   cancelAll,
   active,

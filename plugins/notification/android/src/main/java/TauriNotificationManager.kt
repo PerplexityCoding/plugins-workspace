@@ -40,6 +40,7 @@ const val NOTIFICATION_IS_REMOVABLE_KEY = "NotificationRepeating"
 const val REMOTE_INPUT_KEY = "NotificationRemoteInput"
 const val DEFAULT_NOTIFICATION_CHANNEL_ID = "default"
 const val DEFAULT_PRESS_ACTION = "tap"
+internal const val SCHEDULE_GRACE_WINDOW_MS = 30 * 60 * 1000L
 
 class TauriNotificationManager(
   private val storage: NotificationStorage,
@@ -333,6 +334,29 @@ class TauriNotificationManager(
           Logger.error(Logger.tags("Notification"), "Scheduled time must be *after* current time", null)
           return
         }
+        val now = Date().time
+        val delta = now - schedule.date.time
+        if (delta > 0) {
+          if (delta > SCHEDULE_GRACE_WINDOW_MS) {
+            Logger.debug(
+              Logger.tags("Notification"),
+              "Scheduled time too old, dropping (id=${request.id} at=${schedule.date.time} now=$now delta=$delta)"
+            )
+            storage.deleteNotification(request.id.toString())
+            return
+          }
+          Logger.debug(
+            Logger.tags("Notification"),
+            "Scheduled time in past but within grace, firing soon (id=${request.id} at=${schedule.date.time} now=$now delta=$delta)"
+          )
+          val trigger = now + 5_000
+          setExactIfPossible(alarmManager, schedule, trigger, pendingIntent)
+          return
+        }
+        Logger.debug(
+          Logger.tags("Notification"),
+          "triggerScheduledNotification(At): id=${request.id} at=${schedule.date.time} repeating=${schedule.repeating}"
+        )
         if (schedule.repeating) {
           val interval: Long = schedule.date.time - Date().time
           alarmManager.setRepeating(AlarmManager.RTC, schedule.date.time, interval, pendingIntent)
@@ -557,6 +581,20 @@ class LocalNotificationRestoreReceiver : BroadcastReceiver() {
       if (schedule != null && schedule is NotificationSchedule.At) {
         val at: Date = schedule.date
         if (at.before(Date())) {
+          val now = Date().time
+          val delta = now - at.time
+          if (delta > SCHEDULE_GRACE_WINDOW_MS) {
+            Logger.debug(
+              Logger.tags("Notification"),
+              "LocalNotificationRestoreReceiver: dropping old notification id=$id at=${at.time} now=$now delta=$delta"
+            )
+            storage.deleteNotification(id)
+            continue
+          }
+          Logger.debug(
+            Logger.tags("Notification"),
+            "LocalNotificationRestoreReceiver: rescheduling past at=${at.time} id=$id"
+          )
           // modify the scheduled date in order to show notifications that would have been delivered while device was off.
           val newDateTime = Date().time + 15 * 1000
           schedule.date = Date(newDateTime)
