@@ -179,6 +179,7 @@ func handleScheduledNotification(_ schedule: NotificationSchedule) throws
     let dateFormatter = DateFormatter()
     dateFormatter.locale = Locale(identifier: "en_US_POSIX")
     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+    dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
 
     if let at = dateFormatter.date(from: date) {
       let dateInfo = Calendar.current.dateComponents(in: TimeZone.current, from: at)
