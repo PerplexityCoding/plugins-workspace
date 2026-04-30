@@ -233,6 +233,11 @@ class NotificationPlugin: Plugin {
     })
   }
 
+  @objc func cleanupPending(_ invoke: Invoke) {
+    UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    invoke.resolve()
+  }
+
   @objc func registerActionTypes(_ invoke: Invoke) throws {
     let args = try invoke.parseArgs(RegisterActionTypesArgs.self)
     makeCategories(args.types)

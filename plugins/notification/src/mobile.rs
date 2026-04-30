@@ -107,8 +107,6 @@ impl<R: Runtime> Notification<R> {
             .map_err(Into::into)
     }
 
-    // only available on Android For now
-    #[cfg(target_os = "android")]
     pub fn cleanup_pending(&self) -> crate::Result<CleanupPendingResult> {
         self.0
             .run_mobile_plugin("cleanupPending", ())
