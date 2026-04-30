@@ -277,6 +277,7 @@ interface PendingNotification {
   title?: string
   body?: string
   schedule: Schedule
+  extra?: Record<string, unknown>
 }
 
 interface CleanupPendingResult {

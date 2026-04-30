@@ -224,6 +224,8 @@ pub struct PendingNotification {
     title: Option<String>,
     body: Option<String>,
     schedule: Schedule,
+    #[serde(default)]
+    extra: HashMap<String, serde_json::Value>,
 }
 
 impl PendingNotification {
@@ -241,6 +243,10 @@ impl PendingNotification {
 
     pub fn schedule(&self) -> &Schedule {
         &self.schedule
+    }
+
+    pub fn extra(&self) -> &HashMap<String, serde_json::Value> {
+        &self.extra
     }
 }
 
